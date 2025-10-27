@@ -7,6 +7,7 @@ import { Server as IOServer } from 'socket.io';
 import authRoutes from './routes/auth.routes.js';
 import threadRoutes from './routes/thread.routes.js';
 import messageRoutes from './routes/message.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 import socketHandler from './services/socket.service.js';
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/thread', threadRoutes);
 app.use('/api/message', messageRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 const server = http.createServer(app);
 
