@@ -59,7 +59,7 @@ export const authenticate = async (
 			id: user.id,
 			username: user.username,
 			email: user.email,
-			plan: user.plan,
+			plan: user.plan || 'basic',
 		};
 
 		return next();

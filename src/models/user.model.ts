@@ -13,6 +13,7 @@ export interface IUser {
 }
 
 export interface IUserDocument extends IUser, Document {
+	_id: Types.ObjectId;
 	comparePassword(candidate: string): Promise<boolean>;
 }
 
@@ -65,19 +66,19 @@ userSchema.pre('save', async function hashPassword(next) {
 	try {
 		const salt = await bcrypt.genSalt(10);
 		this.password = await bcrypt.hash(this.password, salt);
-		return next();
+		next();
 	} catch (error) {
-		return next(error as Error);
+		next(error as Error);
 	}
 });
 
-userSchema.methods.comparePassword = function comparePassword(candidate: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidate: string): Promise<boolean> {
 	return bcrypt.compare(candidate, this.password);
 };
 
 userSchema.set('toJSON', {
 	transform: (_document, returned: any) => {
-		returned.id = returned._id.toString();
+		returned.id = returned._id instanceof Types.ObjectId ? returned._id.toString() : returned._id;
 		delete returned._id;
 		delete (returned as { __v?: number }).__v;
 		delete (returned as { password?: string }).password;

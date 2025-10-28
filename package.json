@@ -30,7 +30,9 @@
 	},
 	"homepage": "https://github.com/Sahnoun122/Darna#readme",
 	"dependencies": {
+		"@types/cors": "^2.8.19",
 		"bcryptjs": "^3.0.2",
+		"cors": "^2.8.5",
 		"dotenv": "^17.2.3",
 		"express": "^5.1.0",
 		"express-validator": "^7.2.1",
@@ -40,6 +42,8 @@
 		"passport": "^0.7.0",
 		"passport-google-oauth20": "^2.0.0",
 		"passport-jwt": "^4.0.1",
+		"socket.io": "^4.8.1",
+		"socket.io-client": "^4.8.1",
 		"qrcode": "^1.5.4",
 		"speakeasy": "^2.0.0"
 	},
@@ -55,6 +59,7 @@
 		"@types/passport": "^1.0.17",
 		"@types/passport-google-oauth20": "^2.0.16",
 		"@types/passport-jwt": "^4.0.1",
+		"@types/socket.io": "^3.0.1",
 		"@types/qrcode": "^1.5.5",
 		"@types/speakeasy": "^2.0.0",
 		"husky": "^9.1.7",
