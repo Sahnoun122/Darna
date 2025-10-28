@@ -1,13 +1,15 @@
 import bcrypt from 'bcryptjs';
-import { Schema, model, Document, Model, Types } from 'mongoose';
+import { Schema, model, Document, Model } from 'mongoose';
 
 export interface IUser {
 	username: string;
 	email: string;
 	password: string;
-	plan?: string;
-	createdAt?: Date;
-	updatedAt?: Date;
+	plan: string;
+	twoFA: boolean;
+	twoFASecret?: string | null;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -38,7 +40,17 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		},
 		plan: {
 			type: String,
+			required: true,
 			default: 'basic',
+		},
+		twoFA: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
+		twoFASecret: {
+			type: String,
+			default: null,
 		},
 	},
 	{
@@ -46,8 +58,10 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 	}
 );
 
-userSchema.pre<IUserDocument>('save', async function (next) {
-	if (!this.isModified('password')) return next();
+userSchema.pre('save', async function hashPassword(next) {
+	if (!this.isModified('password')) {
+		return next();
+	}
 
 	try {
 		const salt = await bcrypt.genSalt(10);
@@ -66,8 +80,9 @@ userSchema.set('toJSON', {
 	transform: (_document, returned: any) => {
 		returned.id = returned._id instanceof Types.ObjectId ? returned._id.toString() : returned._id;
 		delete returned._id;
-		delete returned.__v;
-		delete returned.password;
+		delete (returned as { __v?: number }).__v;
+		delete (returned as { password?: string }).password;
+		delete (returned as { twoFASecret?: string | null }).twoFASecret;
 		return returned;
 	},
 });

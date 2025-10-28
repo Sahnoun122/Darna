@@ -49,12 +49,16 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 	try {
 		const email = ensureString(req.body.email);
 		const password = ensureString(req.body.password);
+		const twoFAToken = ensureString(req.body.twoFAToken);
 
 		if (!email || !password) {
 			return res.status(400).json({ message: 'email and password are required' });
 		}
 
 		const payload: LoginInput = { email, password };
+		if (twoFAToken) {
+			payload.twoFAToken = twoFAToken;
+		}
 		const result = await authService.login(payload);
 		return res.status(200).json(result);
 	} catch (error) {

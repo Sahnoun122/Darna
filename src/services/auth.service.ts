@@ -1,5 +1,6 @@
 import { User, IUserDocument } from '../models/user.model.js';
 import { signAccessToken } from '../config/jwt.js';
+import { twoFAService, TwoFAServiceError } from './twoFA.service.js';
 
 export class AuthServiceError extends Error {
 	public statusCode: number;
@@ -21,6 +22,7 @@ export interface RegisterInput {
 export interface LoginInput {
 	email: string;
 	password: string;
+	twoFAToken?: string;
 }
 
 export interface AuthenticatedUser {
@@ -28,6 +30,7 @@ export interface AuthenticatedUser {
 	username: string;
 	email: string;
 	plan: string;
+	twoFA: boolean;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -43,6 +46,7 @@ const sanitizeUser = (user: IUserDocument): AuthenticatedUser => {
 		username: string;
 		email: string;
 		plan: string;
+		twoFA: boolean;
 		createdAt: Date;
 		updatedAt: Date;
 	};
@@ -55,6 +59,7 @@ const sanitizeUser = (user: IUserDocument): AuthenticatedUser => {
 		username: plain.username,
 		email: plain.email,
 		plan: plain.plan,
+		twoFA: plain.twoFA,
 		createdAt: toIso(plain.createdAt),
 		updatedAt: toIso(plain.updatedAt),
 	};
@@ -74,6 +79,7 @@ class AuthService {
 			email,
 			password: data.password,
 			plan: data.plan.trim() || 'basic',
+			twoFA: false,
 		});
 
 		await user.save();
@@ -96,6 +102,26 @@ class AuthService {
 		const isPasswordValid = await user.comparePassword(data.password);
 		if (!isPasswordValid) {
 			throw new AuthServiceError('Invalid credentials', 401);
+		}
+
+		if (user.twoFA) {
+			const token = data.twoFAToken?.trim();
+			if (!token) {
+				throw new AuthServiceError('Two-factor authentication code required', 401);
+			}
+
+			try {
+				const isTwoFATokenValid = await twoFAService.verifyLoginToken(user.id, token);
+				if (!isTwoFATokenValid) {
+					throw new AuthServiceError('Invalid two-factor authentication code', 401);
+				}
+			} catch (err) {
+				if (err instanceof TwoFAServiceError) {
+					const serviceError = err as TwoFAServiceError;
+					throw new AuthServiceError(serviceError.message, serviceError.statusCode);
+				}
+				throw err;
+			}
 		}
 
 		const accessToken = signAccessToken({ userId: user.id });
