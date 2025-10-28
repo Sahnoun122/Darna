@@ -170,6 +170,10 @@ MINIO_PORT=9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:8000/api/auth/google/callback
+
 4️⃣ Lancer le serveur
 npm run dev
 
@@ -203,6 +207,35 @@ docker ps
 
 
 L’API tourne sur le port 5000 et MongoDB sur 27017.
+
+## 🔐 Google OAuth (Login avec Google)
+
+L’API expose des endpoints pour l’authentification via Google OAuth 2.0.
+
+- Démarrer le flow: GET http://localhost:8000/api/auth/google
+- Callback configuré dans Google Cloud Console: http://localhost:8000/api/auth/google/callback
+
+Variables d’environnement requises:
+
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
+- GOOGLE_CALLBACK_URL
+
+Étapes de configuration côté Google Cloud:
+
+1. Créez un projet dans Google Cloud Console.
+2. Activez "OAuth consent screen" et ajoutez le scope email et profile.
+3. Créez des identifiants OAuth 2.0 (type Application Web).
+4. Ajoutez http://localhost:8000 comme origine autorisée.
+5. Ajoutez http://localhost:8000/api/auth/google/callback comme URI de redirection autorisé.
+6. Copiez Client ID et Secret dans votre fichier .env.
+
+Comportement après login:
+
+- Si OAUTH_SUCCESS_REDIRECT est défini, l’API redirige vers cette URL en ajoutant ?token=<JWT>.
+- Sinon, l’API renvoie { accessToken: "<JWT>" } en JSON.
+
+Vous pouvez aussi définir OAUTH_FAILURE_REDIRECT pour rediriger en cas d’erreur, sinon l’API renverra un JSON 401.
 
 🔄 CI/CD (GitHub Actions)
 
