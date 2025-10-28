@@ -4,6 +4,7 @@ import { connectDB } from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import propertyRoutes from './routes/property.routes.js';
 import twoFARoutes from './routes/twoFA.routes.js';
+import { swaggerDocs } from './config/swagger.js';
 import oauthRoutes from './routes/OAuth.routes.js';
 import passport from './config/passport.js';
 
@@ -20,7 +21,9 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/2fa', twoFARoutes);
 app.use('/api/auth', oauthRoutes);
 
-const PORT = process.env.PORT || 8000;
+const PORT: number = Number(process.env.PORT) || 8000;
+
+swaggerDocs(app, PORT);
 
 app.listen(PORT, () => {
 	console.log(`Serveur démarré sur http://localhost:${PORT}`);
