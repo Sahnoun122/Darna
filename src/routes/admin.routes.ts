@@ -17,3 +17,4 @@ router.put('/approve/:id', authenticate, verifyAdmin, approveProperty);
 router.put('/reject/:id', authenticate, verifyAdmin, rejectProperty);
 
 router.get('/reported', authenticate, verifyAdmin, getReportedProperties);
+export default router;
