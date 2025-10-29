@@ -6,6 +6,8 @@ export interface IProperty extends Document {
 	transactionType: 'vente' | 'location_journalière' | 'location_mensuelle' | 'location_longue';
 	price: number;
 	availability: boolean;
+	status: 'pending' | 'approved' | 'rejected';
+	reports: { user: Schema.Types.ObjectId; reason: string; createdAt: Date }[];
 	location: {
 		address: string;
 		city: string;
@@ -41,6 +43,18 @@ const propertySchema = new Schema<IProperty>(
 		},
 		price: { type: Number, required: true },
 		availability: { type: Boolean, default: true },
+		status: {
+			type: String,
+			enum: ['pending', 'approved', 'rejected'],
+			default: 'pending',
+		},
+		reports: [
+			{
+				user: { type: Schema.Types.ObjectId, ref: 'User' },
+				reason: String,
+				createdAt: { type: Date, default: Date.now },
+			},
+		],
 		location: {
 			address: String,
 			city: String,
@@ -64,4 +78,5 @@ const propertySchema = new Schema<IProperty>(
 	},
 	{ timestamps: true }
 );
+
 export const Property = model<IProperty>('Property', propertySchema);
