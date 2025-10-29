@@ -1,11 +1,9 @@
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
 
-// Mock middlewares
 const authenticate = (req: Request, res: Response, next: NextFunction) => next();
 const verifyAdmin = (req: Request, res: Response, next: NextFunction) => next();
 
-// Mock controllers
 const getAllPlans = (req: Request, res: Response) =>
 	res.status(200).json([{ id: 'plan1', name: 'Basic' }]);
 const createPlan = (req: Request, res: Response) =>
@@ -14,7 +12,6 @@ const updatePlan = (req: Request, res: Response) => res.status(200).json({ ...re
 const deletePlan = (req: Request, res: Response) =>
 	res.status(200).json({ message: 'Plan deleted' });
 
-// Mock router
 import { Router } from 'express';
 const router = Router();
 router.get('/plans', authenticate, verifyAdmin, getAllPlans);
