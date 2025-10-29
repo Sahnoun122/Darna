@@ -18,32 +18,42 @@ import socketHandler from './services/socket.service.js';
 
 dotenv.config();
 
-await connectDB();
+async function main() {
+	await connectDB();
 
-const app = express();
-app.use(express.json());
+	const app = express();
+	app.use(express.json());
 
-app.use(passport.initialize());
+	app.use(passport.initialize());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/auth', oauthRoutes);
-app.use('/api/properties', propertyRoutes);
-app.use('/api/2fa', twoFARoutes);
-app.use('/api/thread', threadRoutes);
-app.use('/api/message', messageRoutes);
-app.use('/api/notifications', notificationRoutes);
+	app.use('/api/auth', authRoutes);
+	app.use('/api/auth', oauthRoutes);
+	app.use('/api/properties', propertyRoutes);
+	app.use('/api/2fa', twoFARoutes);
+	app.use('/api/thread', threadRoutes);
+	app.use('/api/message', messageRoutes);
+	app.use('/api/notifications', notificationRoutes);
 
-const server = http.createServer(app);
+	const server = http.createServer(app);
 
-const io = new IOServer(server, {
-	cors: { origin: '*' },
-});
+	const io = new IOServer(server, {
+		cors: { origin: '*' },
+	});
 
-socketHandler(io);
+	socketHandler(io);
 
-const PORT = process.env.PORT || 8000;
-swaggerDocs(app, PORT);
+	const PORT = 8000;
+	swaggerDocs(app, PORT);
 
-server.listen(PORT, () => {
-	console.log(`Serveur démarré sur http://localhost:${PORT}`);
+	app.listen(PORT, () => {
+		console.log(`Serveur démarré sur http://localhost:${PORT}`);
+	});
+
+	server.listen(8001, () => {
+		console.log('websocket server runned at http://localhost:8001');
+	});
+}
+
+main().catch((err) => {
+	console.log('error running server', err);
 });
