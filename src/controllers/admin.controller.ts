@@ -32,3 +32,15 @@ export const rejectProperty = async (req: Request, res: Response) => {
 		res.status(500).json({ message: 'Erreur lors du rejet.' });
 	}
 };
+
+export const getReportedProperties = async (req: Request, res: Response) => {
+	try {
+		const reported = await Property.find({ 'reports.0': { $exists: true } }).populate(
+			'reports.user',
+			'email'
+		);
+		res.status(200).json(reported);
+	} catch (error) {
+		res.status(500).json({ message: 'erreur lors du changement ' });
+	}
+};
