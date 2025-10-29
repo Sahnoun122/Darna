@@ -18,6 +18,8 @@ import socketHandler from './services/socket.service.js';
 
 import adminRoutes from './routes/admin.routes.js';
 
+import planRoutes from './routes/plan.routes';
+
 dotenv.config();
 
 async function main() {
@@ -36,6 +38,8 @@ async function main() {
 	app.use('/api/message', messageRoutes);
 	app.use('/api/notifications', notificationRoutes);
 	app.use('/api/admin', adminRoutes);
+
+	app.use('/api/admin/plans', planRoutes);
 
 	const server = http.createServer(app);
 
