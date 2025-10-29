@@ -8,6 +8,7 @@ export interface IUser {
 	plan: string;
 	twoFA: boolean;
 	twoFASecret?: string | null;
+	role: string;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -51,6 +52,11 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		twoFASecret: {
 			type: String,
 			default: null,
+		},
+		role: {
+			type: String,
+			enum: ['admin', 'regulier'],
+			default: 'regulier',
 		},
 	},
 	{

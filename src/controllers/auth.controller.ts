@@ -21,6 +21,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 		const email = ensureString(req.body.email);
 		const password = ensureString(req.body.password);
 		const plan = ensureString(req.body.plan) ?? 'basic';
+		const role = ensureString(req.body.role) ?? 'regulier';
 
 		if (!username || !email || !password) {
 			return res.status(400).json({
@@ -33,6 +34,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 			email,
 			password,
 			plan,
+			role,
 		};
 
 		const result = await authService.register(payload);

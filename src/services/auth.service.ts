@@ -17,6 +17,7 @@ export interface RegisterInput {
 	email: string;
 	password: string;
 	plan: string;
+	role: string;
 }
 
 export interface LoginInput {
@@ -31,6 +32,7 @@ export interface AuthenticatedUser {
 	email: string;
 	plan: string;
 	twoFA: boolean;
+	role: string;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -47,6 +49,7 @@ const sanitizeUser = (user: IUserDocument): AuthenticatedUser => {
 		email: string;
 		plan: string;
 		twoFA: boolean;
+		role: string;
 		createdAt: Date;
 		updatedAt: Date;
 	};
@@ -60,6 +63,7 @@ const sanitizeUser = (user: IUserDocument): AuthenticatedUser => {
 		email: plain.email,
 		plan: plain.plan,
 		twoFA: plain.twoFA,
+		role: plain.role,
 		createdAt: toIso(plain.createdAt),
 		updatedAt: toIso(plain.updatedAt),
 	};
@@ -80,11 +84,13 @@ class AuthService {
 			password: data.password,
 			plan: data.plan.trim() || 'basic',
 			twoFA: false,
+			role: data.role,
 		});
 
 		await user.save();
 
 		const accessToken = signAccessToken({ userId: user.id });
+		console.log(user);
 		return {
 			user: sanitizeUser(user),
 			accessToken,

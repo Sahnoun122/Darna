@@ -16,7 +16,7 @@ import notificationRoutes from './routes/notification.routes.js';
 
 import socketHandler from './services/socket.service.js';
 
-import adminRoutes from './routes/admin.routes.js'; // ✅ garde ton nom
+import adminRoutes from './routes/admin.routes.js';
 
 dotenv.config();
 
