@@ -5,6 +5,9 @@ import { authenticate } from '../middlewares/auth.middleware.js';
 const router = Router();
 const controller = new PropertyController();
 
+// Route de recherche, filtrage et tri
+router.get('/search', controller.search.bind(controller));
+
 /**
  * @openapi
  * components:
