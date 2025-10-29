@@ -7,6 +7,7 @@ export interface RequestUser {
 	username: string;
 	email: string;
 	plan: string;
+	role?: string;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -14,25 +15,10 @@ export interface AuthenticatedRequest extends Request {
 	userId?: string;
 }
 
-declare global {
-	namespace Express {
-		interface Request {
-			user?: RequestUser;
-			userId?: string;
-		}
-	}
-}
-
 const extractToken = (authorization?: string): string | undefined => {
-	if (!authorization) {
-		return undefined;
-	}
-
+	if (!authorization) return undefined;
 	const [scheme, token] = authorization.split(' ');
-	if (scheme?.toLowerCase() !== 'bearer' || !token) {
-		return undefined;
-	}
-
+	if (scheme?.toLowerCase() !== 'bearer' || !token) return undefined;
 	return token.trim();
 };
 
@@ -43,16 +29,12 @@ export const authenticate = async (
 ): Promise<Response | void> => {
 	try {
 		const token = extractToken(req.headers.authorization);
-		if (!token) {
-			return res.status(401).json({ message: 'Authentication required' });
-		}
+		if (!token) return res.status(401).json({ message: 'Authentication required' });
 
 		const payload = verifyAccessToken(token);
 		const user = await User.findById(payload.userId);
 
-		if (!user) {
-			return res.status(401).json({ message: 'Invalid or expired token' });
-		}
+		if (!user) return res.status(401).json({ message: 'Invalid or expired token' });
 
 		req.userId = user.id;
 		req.user = {
@@ -60,13 +42,38 @@ export const authenticate = async (
 			username: user.username,
 			email: user.email,
 			plan: user.plan || 'basic',
+			role: user.role || 'role',
 		};
 
-		return next();
+		next();
 	} catch (error) {
 		const tokenError = error as Error & { name?: string };
 		const message = tokenError?.name === 'TokenExpiredError' ? 'Token expired' : 'Invalid token';
 		return res.status(401).json({ message });
+	}
+};
+
+export const verifyUser = (
+	req: AuthenticatedRequest,
+	res: Response,
+	next: NextFunction
+): Response | void => {
+	if (req.userId === req.params.id || req.user?.role === 'admin') {
+		return next();
+	} else {
+		return res.status(403).json({ message: 'Access denied: not authorized' });
+	}
+};
+
+export const verifyAdmin = (
+	req: AuthenticatedRequest,
+	res: Response,
+	next: NextFunction
+): Response | void => {
+	if (req.user?.role === 'admin') {
+		return next();
+	} else {
+		return res.status(403).json({ message: 'Admin access only' });
 	}
 };
 
