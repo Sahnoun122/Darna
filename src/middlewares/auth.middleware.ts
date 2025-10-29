@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, RequestHandler } from 'express';
 import { verifyAccessToken } from '../config/jwt.js';
 import { User } from '../models/user.model.js';
 
@@ -7,7 +7,7 @@ export interface RequestUser {
 	username: string;
 	email: string;
 	plan: string;
-	role?: string;
+	role: string;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -22,11 +22,7 @@ const extractToken = (authorization?: string): string | undefined => {
 	return token.trim();
 };
 
-export const authenticate = async (
-	req: AuthenticatedRequest,
-	res: Response,
-	next: NextFunction
-): Promise<Response | void> => {
+export const authenticate: RequestHandler = async (req, res, next) => {
 	try {
 		const token = extractToken(req.headers.authorization);
 		if (!token) return res.status(401).json({ message: 'Authentication required' });
@@ -36,13 +32,13 @@ export const authenticate = async (
 
 		if (!user) return res.status(401).json({ message: 'Invalid or expired token' });
 
-		req.userId = user.id;
-		req.user = {
+		(req as AuthenticatedRequest).userId = user.id;
+		(req as AuthenticatedRequest).user = {
 			id: user.id,
 			username: user.username,
 			email: user.email,
 			plan: user.plan || 'basic',
-			role: user.role || 'role',
+			role: user.role || 'user',
 		};
 
 		next();
@@ -51,6 +47,14 @@ export const authenticate = async (
 		const message = tokenError?.name === 'TokenExpiredError' ? 'Token expired' : 'Invalid token';
 		return res.status(401).json({ message });
 	}
+};
+
+export const verifyAdmin: RequestHandler = (req, res, next) => {
+	const user = (req as AuthenticatedRequest).user;
+	if (!user || user.role !== 'admin') {
+		return res.status(403).json({ message: 'Admin access required' });
+	}
+	next();
 };
 
 export const verifyUser = (
@@ -62,18 +66,6 @@ export const verifyUser = (
 		return next();
 	} else {
 		return res.status(403).json({ message: 'Access denied: not authorized' });
-	}
-};
-
-export const verifyAdmin = (
-	req: AuthenticatedRequest,
-	res: Response,
-	next: NextFunction
-): Response | void => {
-	if (req.user?.role === 'admin') {
-		return next();
-	} else {
-		return res.status(403).json({ message: 'Admin access only' });
 	}
 };
 
