@@ -5,8 +5,9 @@ import {
 	approveProperty,
 	rejectProperty,
 	getReportedProperties,
-} from '../controllers/admin.controller.js';
-import { authenticate, verifyAdmin } from '../middlewares/auth.middleware.js';
+} from '../controllers/admin.controller';
+
+import { authenticate, verifyAdmin } from '../middlewares/auth.middleware';
 
 const router = express.Router();
 
