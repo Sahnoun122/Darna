@@ -4,6 +4,8 @@ import {
 	approveProperty,
 	rejectProperty,
 	getReportedProperties,
+	getPendingEntreprises,
+	validateEntreprise,
 } from '../controllers/admin.controller';
 import { authenticate, verifyAdmin } from '../middlewares/auth.middleware';
 
@@ -175,5 +177,8 @@ router.put('/reject/:id', authenticate, verifyAdmin, rejectProperty);
  *         description: Accès refusé - Droits administrateur requis
  */
 router.get('/reported', authenticate, verifyAdmin, getReportedProperties);
+
+router.get('/entreprises/pending', authenticate, verifyAdmin, getPendingEntreprises);
+router.put('/entreprises/validate/:id', authenticate, verifyAdmin, validateEntreprise);
 
 export default router;

@@ -1,4 +1,3 @@
-// src/models/user.model.ts
 import bcrypt from 'bcryptjs';
 import { Schema, model, Document, Model, Types } from 'mongoose';
 
@@ -10,7 +9,7 @@ export interface IUser {
 	twoFA: boolean;
 	twoFASecret?: string | null;
 	role: string;
-	isValidated: boolean; // ✅ جديد
+	isValidated: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }
