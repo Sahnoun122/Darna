@@ -177,11 +177,136 @@ router.put('/reject/:id', authenticate, verifyAdmin, rejectProperty);
  *       403:
  *         description: Accès refusé - Droits administrateur requis
  */
-router.get('/reported', authenticate, verifyAdmin, getReportedProperties);
+/**
+ * @openapi
+ * tags:
+ *   - name: Admin
+ *     description: Gestion des fonctionnalités administrateur
+ */
 
-router.get('/entreprises/pending', authenticate, verifyAdmin, getPendingEntreprises);
-router.put('/entreprises/validate/:id', authenticate, verifyAdmin, validateEntreprise);
+/**
+ * @openapi
+ * /api/admin/reported:
+ *   get:
+ *     summary: Liste des propriétés signalées
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Liste des propriétés signalées récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   reason:
+ *                     type: string
+ *                   reporter:
+ *                     type: string
+ *       '401':
+ *         description: Non autorisé (token manquant ou invalide)
+ *       '403':
+ *         description: Accès réservé aux administrateurs
+ */
 
-router.get('/stats', authenticate, verifyAdmin, getGlobalStats);
+/**
+ * @openapi
+ * /api/admin/entreprises/pending:
+ *   get:
+ *     summary: Liste des entreprises en attente de validation
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Liste des entreprises en attente récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *       '401':
+ *         description: Non autorisé
+ *       '403':
+ *         description: Accès réservé aux administrateurs
+ */
+
+/**
+ * @openapi
+ * /api/admin/entreprises/validate/{id}:
+ *   put:
+ *     summary: Valider une entreprise en attente
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de l'entreprise à valider
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Entreprise validée avec succès
+ *       '404':
+ *         description: Entreprise introuvable
+ *       '401':
+ *         description: Non autorisé
+ *       '403':
+ *         description: Accès réservé aux administrateurs
+ */
+
+/**
+ * @openapi
+ * /api/admin/stats:
+ *   get:
+ *     summary: Statistiques globales de la plateforme
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Statistiques globales récupérées avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalUsers:
+ *                   type: integer
+ *                   example: 1200
+ *                 totalEntreprises:
+ *                   type: integer
+ *                   example: 200
+ *                 totalProperties:
+ *                   type: integer
+ *                   example: 530
+ *                 reportedProperties:
+ *                   type: integer
+ *                   example: 12
+ *       '401':
+ *         description: Non autorisé
+ *       '403':
+ *         description: Accès réservé aux administrateurs
+ */
 
 export default router;
