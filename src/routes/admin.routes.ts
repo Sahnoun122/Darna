@@ -6,6 +6,7 @@ import {
 	getReportedProperties,
 	getPendingEntreprises,
 	validateEntreprise,
+	getGlobalStats,
 } from '../controllers/admin.controller';
 import { authenticate, verifyAdmin } from '../middlewares/auth.middleware';
 
@@ -180,5 +181,7 @@ router.get('/reported', authenticate, verifyAdmin, getReportedProperties);
 
 router.get('/entreprises/pending', authenticate, verifyAdmin, getPendingEntreprises);
 router.put('/entreprises/validate/:id', authenticate, verifyAdmin, validateEntreprise);
+
+router.get('/stats', authenticate, verifyAdmin, getGlobalStats);
 
 export default router;
