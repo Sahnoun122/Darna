@@ -1,3 +1,4 @@
+// src/models/user.model.ts
 import bcrypt from 'bcryptjs';
 import { Schema, model, Document, Model, Types } from 'mongoose';
 
@@ -9,6 +10,7 @@ export interface IUser {
 	twoFA: boolean;
 	twoFASecret?: string | null;
 	role: string;
+	isValidated: boolean; // ✅ جديد
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -22,53 +24,20 @@ export interface IUserModel extends Model<IUserDocument> {}
 
 const userSchema = new Schema<IUserDocument, IUserModel>(
 	{
-		username: {
-			type: String,
-			required: true,
-			trim: true,
-		},
-		email: {
-			type: String,
-			required: true,
-			unique: true,
-			lowercase: true,
-			trim: true,
-		},
-		password: {
-			type: String,
-			required: true,
-			minlength: 6,
-		},
-		plan: {
-			type: String,
-			required: true,
-			default: 'basic',
-		},
-		twoFA: {
-			type: Boolean,
-			required: true,
-			default: false,
-		},
-		twoFASecret: {
-			type: String,
-			default: null,
-		},
-		role: {
-			type: String,
-			enum: ['admin', 'regulier'],
-			default: 'regulier',
-		},
+		username: { type: String, required: true, trim: true },
+		email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+		password: { type: String, required: true, minlength: 6 },
+		plan: { type: String, required: true, default: 'basic' },
+		twoFA: { type: Boolean, required: true, default: false },
+		twoFASecret: { type: String, default: null },
+		role: { type: String, enum: ['admin', 'regulier', 'entreprise'], default: 'regulier' },
+		isValidated: { type: Boolean, default: false },
 	},
-	{
-		timestamps: true,
-	}
+	{ timestamps: true }
 );
 
 userSchema.pre('save', async function hashPassword(next) {
-	if (!this.isModified('password')) {
-		return next();
-	}
-
+	if (!this.isModified('password')) return next();
 	try {
 		const salt = await bcrypt.genSalt(10);
 		this.password = await bcrypt.hash(this.password, salt);
@@ -84,11 +53,11 @@ userSchema.methods.comparePassword = async function (candidate: string): Promise
 
 userSchema.set('toJSON', {
 	transform: (_document, returned: any) => {
-		returned.id = returned._id instanceof Types.ObjectId ? returned._id.toString() : returned._id;
+		returned.id = returned._id.toString();
 		delete returned._id;
-		delete (returned as { __v?: number }).__v;
-		delete (returned as { password?: string }).password;
-		delete (returned as { twoFASecret?: string | null }).twoFASecret;
+		delete returned.__v;
+		delete returned.password;
+		delete returned.twoFASecret;
 		return returned;
 	},
 });
