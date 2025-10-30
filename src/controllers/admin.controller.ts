@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { Property } from '../models/property.model';
 import { User } from '../models/user.model.js';
 
+import * as adminService from '../services/admin.service.js';
+
 export const getPendingProperties = async (req: Request, res: Response) => {
 	try {
 		const pending = await Property.find({ status: 'pending' }).populate('owner', 'email');
@@ -56,4 +58,21 @@ export const validateEntreprise = async (req: Request, res: Response) => {
 	const user = await User.findByIdAndUpdate(id, { isValidated: true }, { new: true });
 	if (!user) return res.status(404).json({ message: 'Entreprise not found' });
 	return res.status(200).json({ message: 'Entreprise validée', user });
+};
+
+export const getGlobalStats = async (req: Request, res: Response) => {
+	try {
+		const stats = await adminService.getGlobalStats();
+		res.status(200).json({
+			success: true,
+			message: 'Statistiques globales récupérées avec succès',
+			data: stats,
+		});
+	} catch (error) {
+		console.error('Erreur lors de la récupération des statistiques :', error);
+		res.status(500).json({
+			success: false,
+			message: 'Erreur serveur lors de la récupération des statistiques',
+		});
+	}
 };
