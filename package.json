@@ -11,7 +11,11 @@
 		"start": "node dist/server.js",
 		"build": "tsc",
 		"prepare": "husky",
-		"commitlint": "commitlint --edit"
+		"commitlint": "commitlint --edit",
+		"test": "jest --passWithNoTests"
+	},
+	"lint-staged": {
+		"**/*": "prettier --write --ignore-unknown"
 	},
 	"repository": {
 		"type": "git",
@@ -26,15 +30,24 @@
 	},
 	"homepage": "https://github.com/Sahnoun122/Darna#readme",
 	"dependencies": {
+		"@types/cors": "^2.8.19",
 		"bcryptjs": "^3.0.2",
+		"cors": "^2.8.5",
 		"dotenv": "^17.2.3",
 		"express": "^5.1.0",
 		"express-validator": "^7.2.1",
 		"jsonwebtoken": "^9.0.2",
+		"lint-staged": "^16.2.5",
 		"mongoose": "^8.19.2",
 		"passport": "^0.7.0",
 		"passport-google-oauth20": "^2.0.0",
-		"passport-jwt": "^4.0.1"
+		"passport-jwt": "^4.0.1",
+		"qrcode": "^1.5.4",
+		"socket.io": "^4.8.1",
+		"socket.io-client": "^4.8.1",
+		"speakeasy": "^2.0.0",
+		"swagger-jsdoc": "^6.2.8",
+		"swagger-ui-express": "^5.0.1"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^20.1.0",
@@ -42,13 +55,24 @@
 		"@types/bcryptjs": "^2.4.6",
 		"@types/express": "^5.0.3",
 		"@types/express-validator": "^2.20.33",
+		"@types/jest": "^29.5.14",
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/node": "^24.9.1",
 		"@types/passport": "^1.0.17",
 		"@types/passport-google-oauth20": "^2.0.16",
 		"@types/passport-jwt": "^4.0.1",
+		"@types/qrcode": "^1.5.5",
+		"@types/socket.io": "^3.0.1",
+		"@types/speakeasy": "^2.0.0",
+		"@types/supertest": "^6.0.3",
+		"@types/swagger-jsdoc": "^6.0.4",
+		"@types/swagger-ui-express": "^4.1.8",
 		"husky": "^9.1.7",
+		"jest": "^30.2.0",
 		"nodemon": "^3.1.10",
+		"prettier": "3.6.2",
+		"supertest": "^7.1.4",
+		"ts-jest": "^29.4.5",
 		"ts-node-dev": "^2.0.0",
 		"typescript": "^5.9.3"
 	}

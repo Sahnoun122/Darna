@@ -1,29 +1,34 @@
-import express from "express";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
+import http from 'http';
+import dotenv from 'dotenv';
+import express from 'express';
+import { connectDB } from './config/db.js';
+import { Server as IOServer } from 'socket.io';
+
+import authRoutes from './routes/auth.routes.js';
+import threadRoutes from './routes/thread.routes.js';
+import messageRoutes from './routes/message.routes.js';
+import socketHandler from './services/socket.service.js';
 
 dotenv.config();
 
-const app = express();
+await connectDB();
 
+const app = express();
 app.use(express.json());
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/darna";
+app.use('/api/auth', authRoutes);
+app.use('/api/thread', threadRoutes);
+app.use('/api/message', messageRoutes);
 
-mongoose
-	.connect(MONGO_URI)
-	.then(() => console.log("✅ Connecté à MongoDB"))
-	.catch((err) => console.error("❌ Erreur de connexion MongoDB:", err));
+const server = http.createServer(app);
 
-// Route de test
-app.get("/", (req, res) => {
-	res.json({ message: "🚀 API fonctionnelle avec Express + TypeScript + ES6" });
+const io = new IOServer(server, {
+	cors: { origin: '*' },
 });
 
-// Définir le port
-const PORT = process.env.PORT || 8000;
+socketHandler(io);
 
-// Démarrer le serveur
-app.listen(PORT, () => {
-	console.log(`🌍 Serveur démarré sur http://localhost:${PORT}`);
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+	console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
 });

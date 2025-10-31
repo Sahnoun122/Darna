@@ -11,44 +11,54 @@ Cette solution se veut **scalable**, **sécurisée** et **intelligente**, exploi
 ## 🚀 Fonctionnalités principales
 
 ### 🔹 Gestion complète des biens immobiliers
+
 - Création, modification, suppression et publication des annonces.
 - Vente, location journalière, mensuelle ou longue durée.
 - Promotion de biens selon le plan d’abonnement.
 
 ### 🔹 Comptes et abonnements différenciés
+
 - Profils : **Visiteur**, **Particulier**, **Entreprise (Agence/Promoteur)**, **Administrateur**.
 - Types d’abonnement : **Gratuit**, **Pro**, **Premium**.
 - Impact sur la visibilité et la priorité d’affichage.
 
 ### 🔹 Stockage de médias
+
 - Hébergement d’images et vidéos sur **MinIO**.
 - Génération automatique de vignettes.
 
 ### 🔹 Communication en temps réel
+
 - Chat instantané avec **WebSocket / Socket.IO**.
 - Notifications en temps réel (in-app + email).
 
 ### 🔹 Estimation de prix intelligente
+
 - Calcul automatique d’un **intervalle de prix recommandé** basé sur les caractéristiques du bien via un **modèle d’intelligence artificielle (LLM)**.
 
 ### 🔹 Système de notification
+
 - Envoi de notifications lors de :
-  - Réception d’un message ou d’un lead.
-  - Expiration d’un abonnement.
-  - Validation ou suppression d’une annonce.
+   - Réception d’un message ou d’un lead.
+   - Expiration d’un abonnement.
+   - Validation ou suppression d’une annonce.
 
 ### 🔹 Recherche et filtrage avancés
+
 - Recherche multi-critères : localisation, prix, surface, type, équipements, etc.
 - Tri par **pertinence**, **récence**, ou **prix**.
 
 ### 🔹 Gestion des leads
+
 - Création automatique d’un lead lorsqu’un utilisateur manifeste un intérêt.
 - Ouverture automatique d’un canal de discussion.
 
 ### 🔹 Espace administrateur
+
 - Tableau de bord complet : gestion des utilisateurs, annonces, abonnements, statistiques, modération.
 
 ### 🔹 Options de financement
+
 - Présentation de **banques partenaires** et simulateur de crédit immobilier.
 - Interconnexion avec la plateforme **Tirelire (Daret l Darna)** pour les épargnes collectives.
 
@@ -56,18 +66,18 @@ Cette solution se veut **scalable**, **sécurisée** et **intelligente**, exploi
 
 ## 🧩 Technologies utilisées
 
-| Catégorie | Technologies |
-|------------|--------------|
-| **Backend** | Node.js, Express.js |
-| **Base de données** | MongoDB + Mongoose |
-| **Authentification** | JWT + OAuth + 2FA |
-| **Stockage fichiers** | MinIO |
-| **Temps réel** | Socket.IO / WS |
-| **Tests** | Jest |
-| **Gestion projet** | JIRA (Epics, User Stories, Tasks, Subtasks) |
-| **CI/CD** | GitHub Actions / Jenkins |
-| **Déploiement** | Docker + PM2 |
-| **Architecture** | N-tiers (Controller / Service / Model / Route / Middleware) |
+| Catégorie             | Technologies                                                |
+| --------------------- | ----------------------------------------------------------- |
+| **Backend**           | Node.js, Express.js                                         |
+| **Base de données**   | MongoDB + Mongoose                                          |
+| **Authentification**  | JWT + OAuth + 2FA                                           |
+| **Stockage fichiers** | MinIO                                                       |
+| **Temps réel**        | Socket.IO / WS                                              |
+| **Tests**             | Jest                                                        |
+| **Gestion projet**    | JIRA (Epics, User Stories, Tasks, Subtasks)                 |
+| **CI/CD**             | GitHub Actions / Jenkins                                    |
+| **Déploiement**       | Docker + PM2                                                |
+| **Architecture**      | N-tiers (Controller / Service / Model / Route / Middleware) |
 
 ---
 
@@ -160,6 +170,10 @@ MINIO_PORT=9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:8000/api/auth/google/callback
+
 4️⃣ Lancer le serveur
 npm run dev
 
@@ -193,6 +207,35 @@ docker ps
 
 
 L’API tourne sur le port 5000 et MongoDB sur 27017.
+
+## 🔐 Google OAuth (Login avec Google)
+
+L’API expose des endpoints pour l’authentification via Google OAuth 2.0.
+
+- Démarrer le flow: GET http://localhost:8000/api/auth/google
+- Callback configuré dans Google Cloud Console: http://localhost:8000/api/auth/google/callback
+
+Variables d’environnement requises:
+
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
+- GOOGLE_CALLBACK_URL
+
+Étapes de configuration côté Google Cloud:
+
+1. Créez un projet dans Google Cloud Console.
+2. Activez "OAuth consent screen" et ajoutez le scope email et profile.
+3. Créez des identifiants OAuth 2.0 (type Application Web).
+4. Ajoutez http://localhost:8000 comme origine autorisée.
+5. Ajoutez http://localhost:8000/api/auth/google/callback comme URI de redirection autorisé.
+6. Copiez Client ID et Secret dans votre fichier .env.
+
+Comportement après login:
+
+- Si OAUTH_SUCCESS_REDIRECT est défini, l’API redirige vers cette URL en ajoutant ?token=<JWT>.
+- Sinon, l’API renvoie { accessToken: "<JWT>" } en JSON.
+
+Vous pouvez aussi définir OAUTH_FAILURE_REDIRECT pour rediriger en cas d’erreur, sinon l’API renverra un JSON 401.
 
 🔄 CI/CD (GitHub Actions)
 
@@ -289,3 +332,4 @@ Automatisation : lien direct avec GitHub pour suivi des commits et branches.
 📄 Licence
 
 Projet sous licence MIT – libre d’utilisation, modification et distribution à des fins éducatives ou professionnelles.
+```
