@@ -1,23 +1,30 @@
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import * as notificationController from '../controllers/notification.controller.js';
-import { RequestHandler } from 'express';
 
 const router = express.Router();
 
-router.get('/', authenticate, notificationController.getNotifications as unknown as RequestHandler);
+router.get(
+	'/',
+	authenticate as RequestHandler,
+	notificationController.getNotifications as unknown as RequestHandler
+);
 
 router.get(
 	'/unread-count',
-	authenticate,
+	authenticate as RequestHandler,
 	notificationController.getUnreadCount as unknown as RequestHandler
 );
 
-router.put('/read', authenticate, notificationController.markAsRead as unknown as RequestHandler);
+router.put(
+	'/read',
+	authenticate as RequestHandler,
+	notificationController.markAsRead as unknown as RequestHandler
+);
 
 router.delete(
 	'/:notificationId',
-	authenticate,
+	authenticate as RequestHandler,
 	notificationController.deleteNotification as unknown as RequestHandler
 );
 

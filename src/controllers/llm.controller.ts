@@ -1,4 +1,4 @@
-import llmfetch from '../services/llm.service';
+import llmfetch from '../services/llm.service.js';
 import { Request, Response } from 'express';
 
 interface IProperty {

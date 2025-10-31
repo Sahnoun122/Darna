@@ -2,6 +2,10 @@ import Notification from '../models/notification.model.js';
 import { User } from '../models/user.model.js';
 import mongoose from 'mongoose';
 
+/**
+ * Service de notifications - suit la même structure que le service de messages
+ */
+
 export const createNotification = async (
 	userId: string,
 	type: string,

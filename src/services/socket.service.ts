@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 
 const onlineUsers = new Map<string, Set<string>>();
 
+// Helper function pour envoyer des notifications
 const sendNotificationToUser = async (
 	io: Server,
 	userId: string,
@@ -17,6 +18,7 @@ const sendNotificationToUser = async (
 	priority: 'low' | 'medium' | 'high' = 'medium'
 ) => {
 	try {
+		// Créer la notification en base
 		const notification = await notificationService.createNotification(
 			userId,
 			type,
@@ -26,6 +28,7 @@ const sendNotificationToUser = async (
 			priority
 		);
 
+		// Envoyer en temps réel si l'utilisateur est en ligne
 		const userSockets = onlineUsers.get(userId);
 		if (userSockets && userSockets.size > 0) {
 			io.to(`user:${userId}`).emit('notification:new', {
@@ -46,6 +49,7 @@ const sendNotificationToUser = async (
 	}
 };
 
+// Export des helpers de notifications pour utilisation dans d'autres services
 export const notifyPropertyApproved = async (
 	io: Server,
 	userId: string,
@@ -139,10 +143,12 @@ export default function socketHandler(io: Server) {
 
 				for (const r of recipients) {
 					if (String(r) !== userId) {
+						// Ne pas notifier l'expéditeur
 						const sockets = onlineUsers.get(String(r));
 						if (sockets && sockets.size > 0) {
 							message.deliveredTo.push(new mongoose.Types.ObjectId(r));
 						} else {
+							// Utiliser notre nouvelle méthode de notification
 							await sendNotificationToUser(
 								io,
 								String(r),
@@ -187,6 +193,7 @@ export default function socketHandler(io: Server) {
 			socket.to(`thread:${threadId}`).emit('typing', { userId, isTyping });
 		});
 
+		// Événements de notifications
 		socket.on('notification:get', async (ack?: Function) => {
 			try {
 				const notifications = await notificationService.getNotificationsByUser(userId);
@@ -216,6 +223,7 @@ export default function socketHandler(io: Server) {
 						notificationIds
 					);
 
+					// Notifier les autres sockets du même utilisateur
 					socket.to(`user:${userId}`).emit('notification:read', { notificationIds });
 
 					if (ack) ack({ status: 'ok', modifiedCount: result.modifiedCount });
@@ -266,6 +274,7 @@ export default function socketHandler(io: Server) {
 					});
 					io.to(`user:${sellerId}`).emit('lead:new', { thread, sysMsg });
 
+					// Envoyer notification de nouveau lead
 					await sendNotificationToUser(
 						io,
 						sellerId,

@@ -40,6 +40,7 @@ const NotificationSchema = new mongoose.Schema<INotification>(
 	{ timestamps: true }
 );
 
+// Index pour les performances
 NotificationSchema.index({ user: 1, createdAt: -1 });
 NotificationSchema.index({ user: 1, read: 1 });
 

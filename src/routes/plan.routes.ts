@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, verifyAdmin } from '../middlewares/auth.middleware';
+import { authenticate, verifyAdmin } from '../middlewares/auth.middleware.js';
 import {
 	createPlan,
 	getAllPlans,
@@ -7,7 +7,7 @@ import {
 	deletePlan,
 	getSubscriptions,
 	cancelSubscription,
-} from '../controllers/plan.controller';
+} from '../controllers/plan.controller.js';
 
 const router = Router();
 

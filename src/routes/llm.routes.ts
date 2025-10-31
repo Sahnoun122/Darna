@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getEstimation } from '../controllers/llm.controller';
+import { getEstimation } from '../controllers/llm.controller.js';
 
 const router = Router();
 
