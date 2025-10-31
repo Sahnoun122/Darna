@@ -1,5 +1,3 @@
-describe('User tests', () => {
-	it('should pass a dummy test', () => {
-		expect(true).toBe(true);
-	});
+test('placeholder user test', () => {
+	expect(true).toBe(true);
 });

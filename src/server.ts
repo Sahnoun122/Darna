@@ -13,12 +13,13 @@ import twoFARoutes from './routes/twoFA.routes.js';
 import threadRoutes from './routes/thread.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
+import llmRoutes from './routes/llm.routes.js';
 
 import socketHandler from './services/socket.service.js';
 
 import adminRoutes from './routes/admin.routes.js';
 
-import planRoutes from './routes/plan.routes';
+import planRoutes from './routes/plan.routes.js';
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ async function main() {
 	app.use('/api/admin', adminRoutes);
 
 	app.use('/api/admin/plans', planRoutes);
+	app.use('/api/llm', llmRoutes);
 
 	const server = http.createServer(app);
 

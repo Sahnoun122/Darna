@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { Property } from '../models/property.model';
-import { User } from '../models/user.model';
+import { Property } from '../models/property.model.js';
+import { User } from '../models/user.model.js';
 
-import * as adminService from '../services/admin.service';
+import * as adminService from '../services/admin.service.js';
 
 export const getPendingProperties = async (req: Request, res: Response) => {
 	try {

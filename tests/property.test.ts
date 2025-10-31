@@ -1,5 +1,3 @@
-describe('Property tests', () => {
-	it('should pass a dummy test', () => {
-		expect(true).toBe(true);
-	});
+test('placeholder property test', () => {
+	expect(1 + 1).toBe(2);
 });

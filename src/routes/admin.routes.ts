@@ -7,8 +7,8 @@ import {
 	getPendingEntreprises,
 	validateEntreprise,
 	getGlobalStats,
-} from '../controllers/admin.controller';
-import { authenticate, verifyAdmin } from '../middlewares/auth.middleware';
+} from '../controllers/admin.controller.js';
+import { authenticate, verifyAdmin } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 

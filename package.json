@@ -7,12 +7,12 @@
 		"test": "tests"
 	},
 	"scripts": {
-		"dev": "nodemon --watch src --ext ts --exec tsx src/server.ts",
+		"dev": "nodemon --watch src --ext ts --exec \"node --loader ts-node/esm src/server.ts\"",
 		"start": "node dist/server.js",
 		"build": "tsc",
 		"prepare": "husky",
 		"commitlint": "commitlint --edit",
-		"test": "jest"
+		"test": "jest --passWithNoTests"
 	},
 	"lint-staged": {
 		"**/*": "prettier --write --ignore-unknown"
@@ -55,7 +55,7 @@
 		"@types/bcryptjs": "^2.4.6",
 		"@types/express": "^5.0.3",
 		"@types/express-validator": "^2.20.33",
-		"@types/jest": "^30.0.0",
+		"@types/jest": "^29.5.14",
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/node": "^24.9.1",
 		"@types/passport": "^1.0.17",
@@ -74,7 +74,6 @@
 		"supertest": "^7.1.4",
 		"ts-jest": "^29.4.5",
 		"ts-node-dev": "^2.0.0",
-		"tsx": "^4.20.6",
 		"typescript": "^5.9.3"
 	}
 }
