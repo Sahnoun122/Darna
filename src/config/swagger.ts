@@ -17,7 +17,7 @@ const options: swaggerJsdoc.Options = {
 			},
 		],
 	},
-	apis: ['./src/routes/*.ts'], // chemins vers les fichiers contenant les annotations JSDoc
+	apis: ['./src/routes/*.ts'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
