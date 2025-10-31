@@ -13,6 +13,7 @@ import twoFARoutes from './routes/twoFA.routes.js';
 import threadRoutes from './routes/thread.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
+import llmRoutes from './routes/llm.routes.js';
 
 import socketHandler from './services/socket.service.js';
 
@@ -33,6 +34,7 @@ async function main() {
 	app.use('/api/thread', threadRoutes);
 	app.use('/api/message', messageRoutes);
 	app.use('/api/notifications', notificationRoutes);
+	app.use('/api/llm', llmRoutes);
 
 	const server = http.createServer(app);
 
